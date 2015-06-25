@@ -16,6 +16,7 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     # TODO: put package requirements here
+    'salt-pepper>=0.3.5'
 ]
 
 test_requirements = [
