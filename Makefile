@@ -35,7 +35,7 @@ clean-test:
 	rm -fr htmlcov/
 
 lint:
-	flake8 salt-mill tests
+	flake8 saltmill tests
 
 test:
 	python setup.py test
@@ -44,7 +44,7 @@ test-all:
 	tox
 
 coverage:
-	coverage run --source salt-mill setup.py test
+	coverage run --source saltmill setup.py test
 	coverage report -m
 	coverage html
 	open htmlcov/index.html

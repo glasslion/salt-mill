@@ -10,7 +10,7 @@ Tests for `salt-mill` module.
 
 import unittest
 
-from salt-mill import salt-mill
+from saltmill import Mill
 
 
 class TestSalt-mill(unittest.TestCase):

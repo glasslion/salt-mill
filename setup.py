@@ -31,10 +31,10 @@ setup(
     author_email='glasslion@gmail.com',
     url='https://github.com/glasslion/salt-mill',
     packages=[
-        'salt-mill',
+        'saltmill',
     ],
-    package_dir={'salt-mill':
-                 'salt-mill'},
+    package_dir={'saltmill':
+                 'saltmill'},
     include_package_data=True,
     install_requires=requirements,
     license="BSD",
