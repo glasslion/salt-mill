@@ -21,8 +21,8 @@ def login_required(func):
 class Mill(object):
     def __init__(self, debug_http=False, *args, **kwargs):
         self.configure(**kwargs)
-        self.pepper = pepper.Pepper(self.login_details['SALTAPI_URL'],
-                                    debug_http=debug_http)
+        self._pepper = pepper.Pepper(self.login_details['SALTAPI_URL'],
+                                     debug_http=debug_http)
 
     def configure(self, **kwargs):
         '''
@@ -62,8 +62,19 @@ class Mill(object):
         '''
         simple wrapper for Pepper.login()
         '''
-        self.auth = self.pepper.login(
+        self.auth = self._pepper.login(
             self.login_details['SALTAPI_USER'],
             self.login_details['SALTAPI_PASS'],
             self.login_details['SALTAPI_EAUTH'],
         )
+
+    def lookup_jid(self, jid):
+        return self._pepper.lookup_jid(jid)
+
+    def local(self, *args, **kwargs):
+        return self._pepper.local(*args, **kwargs)
+
+    def local_async(self, *args, **kwargs):
+        return self._pepper.local_async(*args, **kwargs)
+
+
