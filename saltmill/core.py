@@ -14,7 +14,7 @@ def login_required(func):
             self.login()
         elif time.time() > self.auth['expire']:
             self.login()
-        func(self, *args, **kwargs)
+        return func(self, *args, **kwargs)
     return func_wrapper
 
 
@@ -68,13 +68,17 @@ class Mill(object):
             self.login_details['SALTAPI_EAUTH'],
         )
 
+    @login_required
     def lookup_jid(self, jid):
         return self._pepper.lookup_jid(jid)
 
+    @login_required
     def local(self, *args, **kwargs):
         return self._pepper.local(*args, **kwargs)
 
+    @login_required
     def local_async(self, *args, **kwargs):
         return self._pepper.local_async(*args, **kwargs)
 
 
+default_mill = Mill()
