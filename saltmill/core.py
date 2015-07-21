@@ -80,5 +80,9 @@ class Mill(object):
     def local_async(self, *args, **kwargs):
         return self._pepper.local_async(*args, **kwargs)
 
+    @login_required
+    def runner(self, *args, **kwargs):
+        return self._pepper.runner(*args, **kwargs)
+
 
 default_mill = Mill()
