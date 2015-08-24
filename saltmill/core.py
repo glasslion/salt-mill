@@ -55,6 +55,8 @@ class Mill(object):
         for key, value in details.items():
             details[key] = kwargs.get(key.lower().lstrip('saltapi_'),
                                       details[key])
+        # pass is a Python keyword, use password instead
+        details['SALTAPI_PASS'] = kwargs.get('password', details['SALTAPI_PASS'])
 
         self.login_details = details
 
