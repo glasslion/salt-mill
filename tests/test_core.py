@@ -1,0 +1,26 @@
+# -*- coding: utf-8 -*-
+from saltmill import Mill
+from pepper import PepperException
+import pytest
+
+
+def test_login():
+    mill = Mill()
+    mill.login()
+
+def test_auto_login():
+    mill = Mill()
+    MSG = 'This is a test.'
+    ret = mill.local('*', 'test.echo',MSG)
+    assert len(ret['return'][0]) > 0
+    for salt_id, msg in ret['return'][0].iteritems():
+        assert msg == MSG
+
+def test_renew_auth_token():
+    mill = Mill()
+    mill.login()
+
+    mill.auth['token'] = 'invalid'
+    MSG = 'This is a test.'
+    ret = mill.local('*', 'test.echo',MSG)
+    assert len(ret['return'][0]) > 0
