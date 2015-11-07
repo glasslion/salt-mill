@@ -14,7 +14,19 @@ def login_required(func):
             self.login()
         elif time.time() > self.auth['expire']:
             self.login()
-        return func(self, *args, **kwargs)
+        try:
+            ret = func(self, *args, **kwargs)
+        except pepper.PepperException as e:
+            if str(e)  == "Authentication denied":
+                # when service salt-api restart, the old tokens are revoked,
+                # the client does not konw that, and still use the old token.
+                # So when we got 'Authentication denied', we re-login once,
+                # and try again.
+                self.login()
+                ret = func(self, *args, **kwargs)
+            else:
+                raise
+        return ret
     return func_wrapper
 
 
