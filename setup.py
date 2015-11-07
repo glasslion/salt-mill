@@ -15,8 +15,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
 requirements = [
-    # TODO: put package requirements here
-    'salt-pepper>=0.3.5'
+    'salt-pepper>=0.4.0'
 ]
 
 test_requirements = [

@@ -1,1 +1,1 @@
-salt-pepper >= 0.3.5
+salt-pepper >= 0.4.0
