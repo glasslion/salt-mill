@@ -17,7 +17,7 @@ def login_required(func):
         try:
             ret = func(self, *args, **kwargs)
         except pepper.PepperException as e:
-            if str(e)  == "Authentication denied":
+            if str(e) == "Authentication denied":
                 # when service salt-api restart, the old tokens are revoked,
                 # the client does not konw that, and still use the old token.
                 # So when we got 'Authentication denied', we re-login once,
@@ -68,7 +68,7 @@ class Mill(object):
             details[key] = kwargs.get(key.lower().lstrip('saltapi_'),
                                       details[key])
         # pass is a Python keyword, use password instead
-        details['SALTAPI_PASS'] = kwargs.get('password', details['SALTAPI_PASS'])
+        details['SALTAPI_PASS'] = kwargs.get('password', details['SALTAPI_PASS'])  # noqa
 
         self.login_details = details
 
