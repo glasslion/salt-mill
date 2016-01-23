@@ -8,7 +8,7 @@ Salt Mill
 Saltstack API Client for Humans
 
 .. image:: https://glasslion.github.io/salt-mill/assets/Salt%2C_sugar_and_pepper_shakers.jpg
-
+        :target: https://commons.wikimedia.org/wiki/File:Salt,_sugar_and_pepper_shakers.jpg
 
 * Free software: BSD license
 
