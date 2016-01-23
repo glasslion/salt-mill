@@ -5,6 +5,7 @@ Salt Mill
 .. image:: https://img.shields.io/pypi/v/salt-mill.svg
         :target: https://pypi.python.org/pypi/salt-mill
 
+.. image:: http://glasslion.github.io/salt-mill/assets/Salt%2C_sugar_and_pepper_shakers.jpg
 
 Saltstack API Client for Humans
 
