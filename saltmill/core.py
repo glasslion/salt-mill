@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import, unicode_literals
+
 import os
 from functools import wraps
 import time
 import ConfigParser
+
+from retrying import retry
 
 import pepper
 
@@ -29,6 +33,8 @@ def login_required(func):
         return ret
     return func_wrapper
 
+def retry_if_empty_result(result):
+    return result == {}
 
 class Mill(object):
     def __init__(self, debug_http=False, *args, **kwargs):
@@ -82,6 +88,8 @@ class Mill(object):
             self.login_details['SALTAPI_EAUTH'],
         )
 
+    @retry(stop_max_attempt_number=3,
+           retry_on_result=retry_if_empty_result)
     @login_required
     def lookup_jid(self, jid):
         return self._pepper.lookup_jid(jid)
