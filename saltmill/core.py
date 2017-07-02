@@ -39,7 +39,7 @@ def retry_if_empty_result(result):
 class Mill(object):
     def __init__(self, debug_http=False, *args, **kwargs):
         self.configure(**kwargs)
-        self._pepper = pepper.Pepper(self.login_details['SALTAPI_URL'],
+        self._pepper = pepper.Pepper(self.confs['SALTAPI_URL'],
                                      debug_http=debug_http)
 
     def configure(self, **kwargs):
@@ -49,43 +49,46 @@ class Mill(object):
         kwargs > environment variables > ~/.pepperrc
         '''
         # default settings
-        details = {
+        confs = {
             'SALTAPI_URL': 'https://localhost:8000/',
             'SALTAPI_USER': 'saltdev',
             'SALTAPI_PASS': 'saltdev',
             'SALTAPI_EAUTH': 'auto',
+            'SALTAPI_DEFAULT_TIMEOUT': 60,
+            'SALTAPI_WAIT_PER_POOL': 3,
         }
 
         # read from ~/.pepperrc
-        config = ConfigParser.RawConfigParser()
-        config.read(os.path.expanduser('~/.pepperrc'))
+        file_config = ConfigParser.RawConfigParser()
+        file_config.read(os.path.expanduser('~/.pepperrc'))
         profile = 'main'
-        if config.has_section(profile):
-            for key, value in config.items(profile):
+        if file_config.has_section(profile):
+            for key, value in file_config.items(profile):
                 key = key.upper()
-                details[key] = config.get(profile, key)
+                confs[key] = file_config.get(profile, key)
 
         # get environment values
-        for key, value in details.items():
-            details[key] = os.environ.get(key, details[key])
+        for key, value in confs.items():
+            confs[key] = os.environ.get(key, confs[key])
 
         # get Mill().__init__ parameters
-        for key, value in details.items():
-            details[key] = kwargs.get(key.lower().lstrip('saltapi_'),
-                                      details[key])
+        for key, value in confs.items():
+            confs[key] = kwargs.get(
+                key.lower().lstrip('saltapi_'), confs[key]
+            )
         # pass is a Python keyword, use password instead
-        details['SALTAPI_PASS'] = kwargs.get('password', details['SALTAPI_PASS'])  # noqa
+        confs['SALTAPI_PASS'] = kwargs.get('password', confs['SALTAPI_PASS'])  # noqa
 
-        self.login_details = details
+        self.confs = confs
 
     def login(self):
         '''
         simple wrapper for Pepper.login()
         '''
         self.auth = self._pepper.login(
-            self.login_details['SALTAPI_USER'],
-            self.login_details['SALTAPI_PASS'],
-            self.login_details['SALTAPI_EAUTH'],
+            self.confs['SALTAPI_USER'],
+            self.confs['SALTAPI_PASS'],
+            self.confs['SALTAPI_EAUTH'],
         )
 
     @retry(stop_max_attempt_number=3,
@@ -106,5 +109,44 @@ class Mill(object):
     def runner(self, *args, **kwargs):
         return self._pepper.runner(*args, **kwargs)
 
+    @login_required
+    def local_poll(self, *args, **kwargs):
+        # timeout is a valid argument for pepper.local()
+        # we use the `poll_timeout` argument for the poll
+        # timeout
+        timeout = kwargs.pop(
+            'poll_timeout',
+            self.confs['SALTAPI_DEFAULT_TIMEOUT']
+        )
+        if 'expr_form' not in kwargs:
+            kwargs['expr_form'] = 'compound'
+
+        async_ret = self.local_async(*args, **kwargs)
+        jid = async_ret['return'][0]['jid']
+        nodes = async_ret['return'][0]['minions']
+
+        # keep trying until all expected nodes return
+        total_time = 0
+        start_time = time.time()
+        exit_code = 0
+        while True:
+            total_time = time.time() - start_time
+            if total_time > timeout:
+                exit_code = 1
+                break
+
+            jid_ret = self.lookup_jid(jid)
+            ret_nodes = list(jid_ret['return'][0].keys())
+            if set(ret_nodes) == set(nodes):
+                break
+            else:
+                time.sleep(self.confs['SALTAPI_WAIT_PER_POOL'])
+
+        # Set non response minions to  {}
+        ret_nodes = jid_ret['return'][0]
+        for node in nodes:
+            if node not in ret_nodes:
+                ret_nodes[node] = {}
+        return jid_ret
 
 default_mill = Mill()

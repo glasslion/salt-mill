@@ -24,3 +24,11 @@ def test_renew_auth_token():
     MSG = 'This is a test.'
     ret = mill.local('*', 'test.echo', MSG)
     assert len(ret['return'][0]) > 0
+
+
+def test_local_poll():
+    mill = Mill()
+    mill.login()
+    MSG = 'This is a test.'
+    ret = mill.local_poll('*', 'test.echo', MSG)
+    assert len(ret['return'][0]) > 0
