@@ -17,6 +17,7 @@ Features
 
 * auto login
 * auto renew auth-token
+* asynchronous polling
 
 Usage
 ---------------
@@ -24,7 +25,12 @@ Usage
 .. code-block:: python
 
     from saltmill import Mill
+
     # By default, mill try to get the authentication configs from
     # func kwarsg, environment variables, and ~/.pepperrc, same as pepper
     mill = Mill()
     mill.local('*', 'test.ping')
+
+    # Create a job with local_async and poll the result with lookup_jid
+    # Works well on long running tasks and unstable network conditions
+    mill.local_pool('*', 'test.ping')
