@@ -24,7 +24,7 @@ test_requirements = [
 
 setup(
     name='salt-mill',
-    version='0.3.0',
+    version='1.0.0',
     description="Saltstack API Client for Humans",
     long_description=readme + '\n\n' + history,
     author="Leo Zhou",
