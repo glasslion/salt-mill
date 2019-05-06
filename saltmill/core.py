@@ -4,7 +4,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 from functools import wraps
 import time
-import ConfigParser
+import six.moves.configparser
 
 from retrying import retry
 
@@ -59,7 +59,7 @@ class Mill(object):
         }
 
         # read from ~/.pepperrc
-        file_config = ConfigParser.RawConfigParser()
+        file_config = six.moves.configparser.RawConfigParser()
         file_config.read(os.path.expanduser('~/.pepperrc'))
         profile = 'main'
         if file_config.has_section(profile):

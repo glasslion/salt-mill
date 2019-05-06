@@ -15,7 +15,8 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
 requirements = [
-    'salt-pepper>=0.4.0'
+    'salt-pepper>=0.4.0',
+    'six',
 ]
 
 test_requirements = [
@@ -24,7 +25,7 @@ test_requirements = [
 
 setup(
     name='salt-mill',
-    version='1.0.0',
+    version='1.1.0',
     description="Saltstack API Client for Humans",
     long_description=readme + '\n\n' + history,
     author="Leo Zhou",
